@@ -1,0 +1,432 @@
+{
+  "name": "(66010916018) Flow 1 — Exam Pass → Certificate Automation / Certificate Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1-Zs8Y5NLLkbFDgrwAszzOw2cZvaMRpizln6zc035F_o",
+          "mode": "list",
+          "cachedResultName": "Certificate Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-Zs8Y5NLLkbFDgrwAszzOw2cZvaMRpizln6zc035F_o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2129446413,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-Zs8Y5NLLkbFDgrwAszzOw2cZvaMRpizln6zc035F_o/edit#gid=2129446413"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "3b8a96c6-5af9-43b5-b308-63142a060169",
+      "name": "Watch Google Sheets",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        256,
+        304
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "VOjh1bDU1PeI0TlW",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "passing_score",
+              "value": 3,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "57c05a6a-ec44-4d1d-bcb1-909d903034fa",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Watch Google Sheets').item.json['คะแนน'] }}",
+              "rightValue": "={{ $json.passing_score }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "00632600-383b-4b21-af23-7272b8c4329e",
+      "name": "Check Passing Grade",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        704,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "format": "yyyy/MM/dd",
+        "outputFieldName": "formatted_date",
+        "options": {}
+      },
+      "id": "0d0f1584-42bb-48c3-9361-f3725ee86b84",
+      "name": "Format Certificate Date",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        960,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "cert_id",
+              "value": "=CERT-{{$now.toFormat('yyyyMMdd')}}-{{Math.floor(Math.random() * 1000)}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f8b3983a-1092-434a-96d9-be3a71254c2e",
+      "name": "Generate Certificate ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "html": "<div style=\"width:800px; height:600px; padding:20px; text-align:center; background-color: #ffffff; font-family: 'Sarabun', 'Helvetica Neue', Helvetica, Arial, sans-serif; position: relative; box-sizing: border-box;\">\n\n    <div style=\"width:100%; height:100%; border: 20px solid #1A237E; box-sizing: border-box; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;\">\n        \n        <div style=\"width:95%; height:95%; border: 2px solid #D4AF37; box-sizing: border-box; position: absolute; top: 2.5%; left: 2.5%;\"></div>\n\n        <div style=\"z-index: 2; width: 80%;\">\n            \n            <h1 style=\"color: #1A237E; font-size:48px; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px;\">\n                ใบประกาศนียบัตร\n            </h1>\n            \n            <p style=\"font-size:18px; color: #757575; margin-bottom: 30px; letter-spacing: 1px;\">\n                ขอมอบรางวัลนี้เพื่อแสดงว่า\n            </p>\n            \n            <h2 style=\"font-size:60px; color: #D4AF37; margin: 20px 0; font-family: 'Times New Roman', serif; font-weight: bold; border-bottom: 1px solid #eee; display: inline-block; padding: 0 40px 10px 40px;\">\n                {{ $('Watch Google Sheets').item.json[\"กรอก \\\"ชื่อเล่น\\\"\"] }}\n            </h2>\n            \n            <p style=\"font-size:20px; color: #333333; margin-top: 30px;\">\n                ได้ผ่านการทดสอบความรู้เป็นที่เรียบร้อยแล้ว\n            </p>\n\n            <div style=\"margin-top: 40px; display: flex; justify-content: center; gap: 50px;\">\n                <div style=\"text-align: center;\">\n                    <span style=\"display: block; font-size: 14px; color: #999; text-transform: uppercase;\">คะแนนที่ได้</span>\n                    <span style=\"font-size: 28px; color: #1A237E; font-weight: bold;\">\n                        {{ $('Watch Google Sheets').item.json[\"คะแนน\"] }}\n                    </span>\n                </div>\n                \n                <div style=\"width: 1px; height: 50px; background-color: #ddd;\"></div> <div style=\"text-align: center;\">\n                    <span style=\"display: block; font-size: 14px; color: #999; text-transform: uppercase;\">วันที่อนุมัติ</span>\n                    <span style=\"font-size: 28px; color: #1A237E;\">\n                        {{ $('Format Certificate Date').item.json[\"formatted_date\"] }}\n                    </span>\n                </div>\n            </div>\n\n        </div>\n\n        <div style=\"position: absolute; bottom: 30px; width: 100%; text-align: center;\">\n             <p style=\"font-size:12px; color: #BDBDBD; margin: 0; letter-spacing: 1px;\">\n                Certificate ID: <span style=\"font-family: monospace;\">{{ $('Generate Certificate ID').item.json[\"cert_id\"] }}</span>\n            </p>\n        </div>\n\n        <div style=\"position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px; border: 3px solid #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0.3; transform: rotate(-15deg);\">\n            <span style=\"color: #D4AF37; font-size: 12px; font-weight: bold; text-align: center;\">OFFICIAL<br>APPROVED</span>\n        </div>\n\n    </div>\n</div>"
+      },
+      "id": "7f92ab2c-6a62-4adf-a391-11bd2027d224",
+      "name": "Create Certificate Template",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Watch Google Sheets').item.json['\"Email\" (สำหรับส่ง Certificate)'] }}",
+        "subject": "Congratulations! Your Exam Certificate",
+        "message": "={{ $('Watch Google Sheets').item.json['กรอก \"ชื่อเล่น\"'] }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "ee935cba-d8b6-4e4c-b735-deaf6c948cca",
+      "name": "Send Certificate via Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        304
+      ],
+      "webhookId": "ba545c22-3f3d-437e-91e9-6096b9ce9f97",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QR0gASqNS3zPvGau",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "to": "U32e52fba2ccd2a7e80a3099574d6ab7d",
+        "messages": {
+          "values": [
+            {
+              "text": "=🎉 ยินดีด้วย! ผลสอบของคุณมาแล้ว\n\n👤 ชื่อ: {{ $('Watch Google Sheets').item.json[\"กรอก \\\"ชื่อเล่น\\\"\"] }}\n📊 คะแนน: {{ $('Watch Google Sheets').item.json[\"คะแนน\"] }}\n🆔 เลขใบประกาศ: {{ $('Generate Certificate ID').item.json[\"cert_id\"] }}\n\nตรวจสอบอีเมลเพื่อรับใบประกาศนะครับ! 📧"
+            }
+          ]
+        }
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessaging",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        304
+      ],
+      "id": "d775d380-79a4-4482-823c-f4098ac889c0",
+      "name": "Line Messaging",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "C5otrkxZ21R5t4oI",
+          "name": "Line Messaging account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "outputFormat": "pdf",
+        "inputBinaryData": false,
+        "inputFileContent": "={{ $json.html }}",
+        "inputFilename": "={{ $('Watch Google Sheets').item.json[\"กรอก \\\"ชื่อเล่น\\\"\"] }}.html"
+      },
+      "type": "@cloudconvert/n8n-nodes-cloudconvert.cloudConvert",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        304
+      ],
+      "id": "d83f92de-1e48-40fd-b3f9-6733bfb318d3",
+      "name": "CloudConvert",
+      "credentials": {
+        "cloudConvertApi": {
+          "id": "bLeT8bFMadnjLuuQ",
+          "name": "CloudConvert account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 1. ดึงชื่อเล่นจากโหนด Watch Google Sheets\n// (สำคัญ: ต้องพิมพ์ชื่อโหนดให้ตรงกับใน Flow ของคุณเป๊ะๆ)\nlet userName = $('Watch Google Sheets').item.json['กรอก \"ชื่อเล่น\"'];\n\n// กรณีกันเหนียว: ถ้าหาชื่อไม่เจอ ให้ใช้ชื่อว่า certificate แทน\nif (!userName) {\n  userName = 'certificate';\n}\n\n// 2. ดึงเนื้อหา HTML\nconst htmlContent = item.json.html;\n\nif (htmlContent) {\n  // 3. สร้างไฟล์โดยใช้ชื่อจากตัวแปร userName\n  item.binary = {\n    data: {\n      data: Buffer.from(htmlContent).toString('base64'),\n      mimeType: 'text/html',\n      \n      // ตรงนี้ครับที่เปลี่ยนชื่อไฟล์ (เช่น \"โอปอ.html\")\n      fileName: userName + '.html', \n      \n      fileExtension: 'html'\n    }\n  };\n}\n\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        304
+      ],
+      "id": "2369b1c0-2bed-4101-9cb1-722df34a9da5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Watch Google Sheets').item.json['\"Email\" (สำหรับส่ง Certificate)'] }}",
+        "subject": "แจ้งผลการทดสอบ: ยังไม่ผ่านเกณฑ์การประเมิน",
+        "emailType": "text",
+        "message": "=สวัสดีคุณ {{ $('Watch Google Sheets').item.json['กรอก \"ชื่อเล่น\"'] }},  ขอบคุณที่ร่วมทำแบบทดสอบครับ  ผลการทดสอบของคุณได้คะแนน: {{ $('Watch Google Sheets').item.json['คะแนน'] }} คะแนน  ซึ่งยังไม่ผ่านเกณฑ์ที่กำหนดไว้ครับ (เกณฑ์ผ่านคือ {{ $('Workflow Configuration').item.json.passing_score }} คะแนน)  ไม่ต้องเสียใจนะครับ คุณสามารถทบทวนเนื้อหาและกลับมาทำแบบทดสอบใหม่ได้อีกครั้งครับ  เป็นกำลังใจให้ครับ ✌️",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        544
+      ],
+      "id": "7dc898fc-e258-4ba9-8578-9f6ad02615d6",
+      "name": "Send Fail Email",
+      "webhookId": "61e26a82-0271-4bff-a7dd-7540c8eaf56f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QR0gASqNS3zPvGau",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "to": "U32e52fba2ccd2a7e80a3099574d6ab7d",
+        "messages": {
+          "values": [
+            {
+              "text": "=📝 แจ้งผลการทดสอบ: ยังไม่ผ่านเกณฑ์\n\n👤 ชื่อ: {{ $('Watch Google Sheets').item.json[\"กรอก \\\"ชื่อเล่น\\\"\"] }}\n📊 คะแนนที่ได้: {{ $('Watch Google Sheets').item.json[\"คะแนน\"] }} / {{ $('Workflow Configuration').item.json.passing_score }} คะแนน\n\nอย่าเพิ่งท้อนะครับ! ระบบได้ส่งลิงก์สำหรับทบทวนบทเรียนไปให้ทางอีเมลเรียบร้อยแล้ว สามารถกลับมาทดสอบใหม่ได้เสมอ เป็นกำลังใจให้ครับ ✌️"
+            }
+          ]
+        }
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessaging",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        624
+      ],
+      "id": "39cc1942-1c1c-4023-b754-bba0a7f3c19b",
+      "name": "Line Notify (Fail)",
+      "credentials": {
+        "lineMessagingApi": {
+          "id": "C5otrkxZ21R5t4oI",
+          "name": "Line Messaging account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Watch Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Check Passing Grade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Passing Grade": {
+      "main": [
+        [
+          {
+            "node": "Format Certificate Date",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Fail Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Certificate Date": {
+      "main": [
+        [
+          {
+            "node": "Generate Certificate ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Certificate ID": {
+      "main": [
+        [
+          {
+            "node": "Create Certificate Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Certificate Template": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Certificate via Gmail": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CloudConvert": {
+      "main": [
+        [
+          {
+            "node": "Send Certificate via Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "CloudConvert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Fail Email": {
+      "main": [
+        [
+          {
+            "node": "Line Notify (Fail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dc52554b-5c03-4b0a-9ced-cac9ad6d9234",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7c2f393abb6587c7d2935899bb980b8c5f5251170fd91e7e69eb579b7071a618"
+  },
+  "id": "kD3OovmYrJfPU074",
+  "tags": []
+}
